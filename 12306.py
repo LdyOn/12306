@@ -18,24 +18,18 @@ query_times = 1
 driver.implicitly_wait(5)
 # 读取配置文件
 config = fc.read_setting()
+
 print("正在登录12306...")
 # 进入登录页
 driver.get("https://kyfw.12306.cn/otn/resources/login.html")
+
 time.sleep(1)
 # 登录
-while True:
-	fc.login(driver)
-	time.sleep(1)
-	if driver.current_url!='https://kyfw.12306.cn/otn/resources/login.html':		
-		break;
-	print("验证码或账号密码有误：")
-	driver.execute_script('location.reload();')
+fc.login(driver, config["username"], config["password"])
 
-print("==================== 登陆成功！ ======================")
+print("==================== ===抢票中=== ========================")
 
 '''进入购票流程'''
-# 等待进入个人中心
-WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME,"welcome-data")))
 # 读取常用联系人，选择要购票的乘客，乘客姓名保存到列表里
 if config["passerger"] == '':
 	driver.get('https://kyfw.12306.cn/otn/view/passengers.html')
@@ -54,7 +48,7 @@ driver.get('https://kyfw.12306.cn/otn/leftTicket/init')
 s = driver.find_element_by_id('fromStationText')
 ActionChains(driver).move_to_element(s)\
 .click(s)\
-.send_keys_to_element(s, station[0])\
+.send_keys_to_element(s, config["s_station"])\
 .move_by_offset(20,50)\
 .click()\
 .perform()
@@ -64,27 +58,20 @@ ActionChains(driver).move_to_element(s)\
 e = driver.find_element_by_id('toStationText')
 ActionChains(driver).move_to_element(e)\
 .click(e)\
-.send_keys_to_element(e, station[1])\
+.send_keys_to_element(e, config["e_station"])\
 .move_by_offset(20,50)\
 .click()\
 .perform()
 
+fc.query_tickets(driver, 
+	travel_dates[random.randint(0,len(travel_dates)-1)])
 
-# 设置出发日
-driver.execute_script('document.getElementById("train_date").removeAttribute("readonly");')
-date = driver.find_element_by_id('train_date')
-date.clear()
-date.send_keys(travel_dates[random.randint(0,len(travel_dates)-1)])
-
-# 点击查询
-driver.execute_script('document.getElementById("query_ticket").click();')
 
 # 选择车次
 if config["train_number"] == '':
 	trains = fc.choose_train(driver)
 else:
 	trains = config["train_number"].split()
-
 
 """
 	票种：
@@ -111,16 +98,5 @@ while True:
 	if driver.current_url=='https://kyfw.12306.cn/otn/confirmPassenger/initDc':
 		fc.confirm_buy(driver, fc.list_to_string(passengers))
 		break;
-	fc.query_tickets(driver, travel_dates)
+	fc.query_tickets(driver, travel_dates[random.randint(0,len(travel_dates)-1)])
 	query_times+=1
-	
-	
-
-
-
-
-
-
-
-
-
