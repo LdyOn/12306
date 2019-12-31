@@ -19,7 +19,7 @@ driver.implicitly_wait(5)
 # 读取配置文件
 config = fc.read_setting()
 
-print("正在登录12306...")
+print("正在打开12306登录页")
 # 进入登录页
 driver.get("https://kyfw.12306.cn/otn/resources/login.html")
 

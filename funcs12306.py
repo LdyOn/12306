@@ -19,7 +19,7 @@ def read_setting():
 			config[s[0].strip()] = s[1].strip()
 
 	return config
-	
+
 # 登录函数
 # 图形验证码不太好破解，这里手动登陆
 def login(driver,username,password):
@@ -143,6 +143,7 @@ def can_buy(driver,train_number,passenger_num,seat_level):
 			}\
 		}'
 	driver.execute_script(js)
+
 
 # 点击下单，确认购买
 def confirm_buy(driver, passengers):
