@@ -6,6 +6,19 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+
+# 从配置文件读取配置
+def read_setting():
+	s_file = open("setting.ini", encoding='UTF-8')
+	config = {}
+	lines = s_file.readlines()
+	for x in lines:
+		if re.match(";", x) == None :
+			x = x.strip('\n')
+			s = x.split("=")
+			config[s[0].strip()] = s[1].strip()
+			
+	return config
 # 登录函数
 def login(driver):
 	# 执行js脚本选择账号密码登陆

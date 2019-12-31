@@ -16,6 +16,8 @@ driver = webdriver.Firefox()
 query_times = 1
 # 等待5秒
 driver.implicitly_wait(5)
+# 读取配置文件
+config = fc.read_setting()
 print("正在登录12306...")
 # 进入登录页
 driver.get("https://kyfw.12306.cn/otn/resources/login.html")
@@ -26,7 +28,7 @@ while True:
 	time.sleep(1)
 	if driver.current_url!='https://kyfw.12306.cn/otn/resources/login.html':		
 		break;
-	print("输入信息有误，请重新输入：")
+	print("验证码或账号密码有误：")
 	driver.execute_script('location.reload();')
 
 print("==================== 登陆成功！ ======================")
@@ -35,16 +37,15 @@ print("==================== 登陆成功！ ======================")
 # 等待进入个人中心
 WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CLASS_NAME,"welcome-data")))
 # 读取常用联系人，选择要购票的乘客，乘客姓名保存到列表里
-driver.get('https://kyfw.12306.cn/otn/view/passengers.html')
-passengers = fc.choose_passenger(driver)
+if config["passerger"] == '':
+	driver.get('https://kyfw.12306.cn/otn/view/passengers.html')
+	passengers = fc.choose_passenger(driver)
+else:
+	passengers = config["passerger"].split()
 
-#输入出发站和终点站
-station = list(input("输入出发站和终点站（空格分隔）：").split())
 
 # 输入出发日期
-travel_dates = list(\
-	input("输入出行日期（例2020-01-09，多个用空格分隔）：")\
-	.split());
+travel_dates  = config["travel_date"].split();
 
 # 进入车票查询页
 driver.get('https://kyfw.12306.cn/otn/leftTicket/init')
@@ -77,8 +78,13 @@ date.send_keys(travel_dates[random.randint(0,len(travel_dates)-1)])
 
 # 点击查询
 driver.execute_script('document.getElementById("query_ticket").click();')
+
 # 选择车次
-trains = fc.choose_train(driver)
+if config["train_number"] == '':
+	trains = fc.choose_train(driver)
+else:
+	trains = config["train_number"].split()
+
 
 """
 	票种：
@@ -94,7 +100,7 @@ trains = fc.choose_train(driver)
 		10：无座
 """
 # 默认抢一等座、二等座、硬卧、硬座
-seat_level = [2,3,7,9]
+seat_level = config["seat_level"].split()
 
 while True:
 	print("查询次数:{0}".format(query_times))

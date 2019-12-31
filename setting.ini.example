@@ -1,0 +1,15 @@
+;配置抢票信息，旅行日期、乘客、车次有多个值的用空格分隔
+;出发地
+s_station=北京
+;目的地
+e_station=上海
+;出行日期
+travel_date = 2020-01-21
+;乘客
+passerger = 
+;车次
+train_number = 
+;登陆用户名
+username=
+;登陆密码
+password=
