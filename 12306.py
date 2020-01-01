@@ -10,14 +10,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 
+# 读取配置文件
+config = fc.read_setting()
+# print(config)
+# input()
 # 打开浏览器
 driver = webdriver.Firefox()
 # 记录查询次数
 query_times = 1
 # 等待5秒
 driver.implicitly_wait(5)
-# 读取配置文件
-config = fc.read_setting()
 
 print("正在打开12306登录页")
 # 进入登录页
@@ -27,7 +29,7 @@ time.sleep(1)
 # 登录
 fc.login(driver, config["username"], config["password"])
 
-print("==================== ===抢票中=== ========================")
+print("=========================抢票中=============================")
 
 '''进入购票流程'''
 # 读取常用联系人，选择要购票的乘客，乘客姓名保存到列表里
@@ -73,20 +75,7 @@ if config["train_number"] == '':
 else:
 	trains = config["train_number"].split()
 
-"""
-	票种：
-		1:商务座
-		2：一等座
-		3：二等座
-		4：高级软卧
-		5：软卧一等卧
-		6：动卧
-		7：硬卧二等卧
-		8：软座
-		9：硬座
-		10：无座
-"""
-# 默认抢一等座、二等座、硬卧、硬座
+# 座位
 seat_level = config["seat_level"].split()
 
 while True:

@@ -13,7 +13,7 @@ def read_setting():
 	config = {}
 	lines = s_file.readlines()
 	for x in lines:
-		if re.match(";", x) == None :
+		if re.match(r'[^;]+=.*', x) != None :
 			x = x.strip('\n')
 			s = x.split("=")
 			config[s[0].strip()] = s[1].strip()
@@ -152,16 +152,13 @@ def confirm_buy(driver, passengers):
 	except Exception as e:
 		print(e)
 
-	print("已为您预订：{0}".format(ticket.text))
+	print("为您预订：{0}".format(ticket.text))
 
 	js = 'var passengers='+passengers+';\
 		console.log(passengers);\
 		var passengers_list = document.getElementById("normal_passenger_id");\
 		var li = passengers_list.children;\
-		while(li.length==0);\
-		console.log(li);\
 		for(var i = 0; i<li.length; i++){\
-			console.log(li[i].children[1].textContent);\
 			if(passengers.indexOf(li[i].children[1].textContent)==-1){\
 				continue;\
 			}\
@@ -169,10 +166,14 @@ def confirm_buy(driver, passengers):
 		}\
 		document.getElementById("submitOrder_id").click();\
 	'
+	# 等待
+	time.sleep(3)
 
 	driver.execute_script(js)
 
-	driver.find_element_by_id("qr_submit_id").click()
+	time.sleep(1)
+
+	driver.execute_script('document.getElementById("qr_submit_id").click()')
 
 	print("订单已提交，请登录12306完成支付")
 	#接下来发送邮件通知
@@ -185,3 +186,7 @@ def list_to_string(li):
 	t_n = '['+t_n+']'
 
 	return t_n
+
+#normal_passenger_id > li:nth-child(1)
+
+
