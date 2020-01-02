@@ -176,6 +176,11 @@ def confirm_buy(driver, passengers):
 	driver.execute_script('document.getElementById("qr_submit_id").click()')
 
 	print("订单已提交，请登录12306完成支付")
+
+	# 播放音乐
+	while True:
+		playsound('kc.mp3')
+
 	#接下来发送邮件通知
 	mail.mail("已为您预订{0}，请在半小时之内登录12306完成支付。".format(ticket.text))
 
@@ -186,7 +191,3 @@ def list_to_string(li):
 	t_n = '['+t_n+']'
 
 	return t_n
-
-#normal_passenger_id > li:nth-child(1)
-
-
