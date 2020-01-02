@@ -2,10 +2,11 @@
 # python购票脚本
 import time
 import random
+import funcs12306 as fc
+
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
-import funcs12306 as fc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
