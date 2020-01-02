@@ -65,6 +65,7 @@ ActionChains(driver).move_to_element(e)\
 .click()\
 .perform()
 
+# 查询车票
 fc.query_tickets(driver, 
 	travel_dates[random.randint(0,len(travel_dates)-1)])
 
@@ -75,9 +76,10 @@ if config["train_number"] == '':
 else:
 	trains = config["train_number"].split()
 
-# 座位
+# 座次
 seat_level = config["seat_level"].split()
 
+# 若没有余票则一直运行
 while True:
 	print("查询次数:{0}".format(query_times))
 	# 判断能否购买，可以购买进入选择乘客页
@@ -86,6 +88,15 @@ while True:
 		fc.list_to_string(seat_level))
 	if driver.current_url=='https://kyfw.12306.cn/otn/confirmPassenger/initDc':
 		fc.confirm_buy(driver, fc.list_to_string(passengers))
+		# 发送邮件通知
+		fc.mail("已为您预订{0}，请在半小时之内登录12306完成支付。"\
+			.format(ticket.text),
+			config["mail_sender"],
+			config["mail_sender_password"],
+			config["mail_receiver"])
+		# 播放音乐
+		while True:
+			playsound('kc.mp3')
 		break;
 	fc.query_tickets(driver, travel_dates[random.randint(0,len(travel_dates)-1)])
 	query_times+=1

@@ -1,11 +1,15 @@
 import time
 import random
-from selenium import webdriver
+import re
+import smtplib
 import mail
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-import re
+from email.mime.text import MIMEText
+from email.utils import formataddr
+from selenium import webdriver
 
 # 从配置文件读取配置
 def read_setting():
@@ -177,12 +181,6 @@ def confirm_buy(driver, passengers):
 
 	print("订单已提交，请登录12306完成支付")
 
-	# 播放音乐
-	while True:
-		playsound('kc.mp3')
-
-	#接下来发送邮件通知
-	mail.mail("已为您预订{0}，请在半小时之内登录12306完成支付。".format(ticket.text))
 
 def list_to_string(li):
 	t_n = ""
@@ -191,3 +189,18 @@ def list_to_string(li):
 	t_n = '['+t_n+']'
 
 	return t_n
+
+# 发送邮件
+def mail(msg_body, my_sender, my_pass, my_user):
+    try:
+        msg=MIMEText(msg_body,'plain','utf-8')
+        msg['From']=formataddr(["ldy",my_sender])  # 括号里的对应发件人邮箱昵称、发件人邮箱账号
+        msg['To']=formataddr(["亲爱的用户",my_user])              # 括号里的对应收件人邮箱昵称、收件人邮箱账号
+        msg['Subject']="12306抢票通知"                # 邮件的主题，也可以说是标题
+
+        server=smtplib.SMTP_SSL("smtp.qq.com", 465)  # 发件人邮箱中的SMTP服务器，端口是25
+        server.login(my_sender, my_pass)  # 括号中对应的是发件人邮箱账号、邮箱密码
+        server.sendmail(my_sender,[my_user,],msg.as_string())  # 括号中对应的是发件人邮箱账号、收件人邮箱账号、发送邮件
+        server.quit()  # 关闭连接
+    except Exception as e:
+        print(e)
